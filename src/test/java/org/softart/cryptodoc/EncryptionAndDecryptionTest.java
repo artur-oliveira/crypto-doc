@@ -1,0 +1,41 @@
+package org.softart.cryptodoc;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.softart.cryptodoc.components.EncryptUtils;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import java.security.PrivateKey;
+import java.security.Security;
+
+public class EncryptionAndDecryptionTest {
+
+    @Test
+    void testEncryptAndDecrypt1() throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+
+        String originalServerPubKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtDO6QS0KOC2FGD/N6WG45VIJswrRcGLEpv/3DCh/GtlIyxIYw/Kd+7Vmcstvt4qODTSu1R//JjW3l+z4Kiftji3UOS3fN9/B746+vFZ23O24ySrk0rJT/ISjIAHexMcUmYudXrUGyFt/RQBAhxiza7hAjdDfxrNLuW49KAlDTg/p4vC93ca101O3YKWXVRKm3Di+7cqrgdd9gv1negaOEpyhqGRA6Xjnt42e6U2zTvxCZO5/qxg/JIA7SZsMWddAVAn97kYL1xtr3spO7WFxqQkOFHgdUjg6XjG741HJRf8vuTaSPlFpBDwvJtme5cdtqgpii5fxvUBDYS1GC/UJJwIDAQAB";
+        String originalAesKey = "u7hr1tyoPx0ArGEZgPdDeMXUhtnHsyK0MIuioO2ZYok=";
+
+        String aesEncryptedWithUserPubKey = "eTuq6xd9kHfoZmg5vY1Yx81IFCPg6cSGlJnuYabPLwR6vCuDmhJLVgmo6XSyiV00+IO1f/LeIVukympOk5mUFMRrhoKq1kmIR5xmVcp3h+v0ELdbQjqrzFhPWNvYQRWHWxhHLniu7doB/6nq+uV6Ohf6GHk+3JLI3ch1V5709h8eMwlIl4adbFfJtf0PLZoQLo+r2UVUhAh8LY5SGl0DXVZXu0P/1QQf5AnwV8qNiE+xjJtezuThdxVV+7ygMHLtQUHAxEWd2OB8U1i3eIeGaAJo2coHWwp5R1J4Q+7gDu2PZADROE3sXSptOarOXVvMMWbnV8IHoejHSUOCWIi2HQ==";
+        String serverPubKeyEncryptedWithAes = "pRaYSeKLDqeB6xNpGgbNvoJdyezcnkOd1KcztJwDeDXZx1vnRGooxkgJClz+aCJ6pzyJA6wZa/pNyrdUMKh/h0biEE6ZFqvIVhpsqELg6IBIMg1DABerXLkFGlu+Acz4Ja0j6TKT58oIba4A2KIsU/hRbD9PKvbizodA9g/RTPDm82tFcThsd7JalUwQZvt7UEXFmTCtcEv9ZtzIHcyomqr3Zv6NbLfANh/ucP+zv2+usjGhwmCLHNVrC7DfciM61hAjuSUlbsed3Nsk7PB7MrGjRrUccDyNDjQWdx/fhdpk9gz28DBN67EKCAwKCgrBDF2THzec8Bclg3EEbEqeohJFp1vx4svTyW9hk3+5ifSjYJX6nCT1j2q7VLJOm+WccMiFVYhI/he01pIUjUi+9yFUmjkUyee4kEhq/AvxhKZWwFJ58/HkWiNpXYw/MTm3od9NvSK0G89JZ539qLOPJvYJXOX9e3/HLPLJBGUIk6g0WTNuEbL8DcdwkNrB74ZWg6pF3ufa08Cnt3J27FdcVw==";
+
+        String privUserKey = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDogSNkSgrTXpoUt2n1ys+utrcpczbkvjMavFi4NWB1DNSvdXRP2S41yyQR6glKSCA1EaLT8uA2nkFrs+pWajkN1Mb9Pozn2DUPnmrC0qJs0nW+eXjS53tcyZJ1tbBNDjVx5gqJ82ydWvjEOYD8YKilKMEF0b8mKOsosJORpZyNi4D29bc3Dr9rjplqhDjgWfUoazzzZjlVVoSxEB89CtCv/AJppw24RhwOucb4EqdedXZ90CqT3pE2j6nmGc7puxVOXCODIHxBuT8IJN7nN181l23LFykjhJLDsfWUVGINngtrE54pzkjjlY8ws574VmndVwTny1kT5/s3Kk2UhxMZAgMBAAECggEAATeNfuoEeD0u/IkwvWv/jgwwCtV1mI6BJTnOPj7uR4fm3u5paqe/U4ysiR5NiJAL1hycD/SzSn87JlmMMkIEVNo+epHJdPG3ZmK82j1LbcXPaWJd+OmkBkpvpod/efRx9cE04H+6ZkZKgM7Fv3HF6Yu8ReqRBUhnzGAvPORjZ0TB/OsPUbEhC3V5ybf0Gz8DfqKj+TpUorLgWnqgeNXpAW2ynvdnZZjq8V0gbNHPYmv8kQoDJhU0oHpxL6+LDSeuoh3E6jIqc+auylXRiu4ZcU+ccIH9Ml3JpgJOSF1ZXIfe+MJt+PWwKqjgJVSj4zYUKo1SrIt1V0qm0gFBfTq/kQKBgQD3/1sUb3Zjh+2KDapWExf3nY4SMLpOXBZVTDPk+Z+8hS3dNuGuR4CqlGLe/HfEeYxeeOkWh/1oMnBQUNUmDe/xYcDwq/bzeHtMGzQd7e3u1o7p2M3ALQ8/uLtcaDAoiF1eI0d2y+4s/2kiJuW1/MrQA6xNcmbbsTPn30JV5abgKQKBgQDwAcxlddMTN9k4A3YMUbk2jTgxO6aEH2UGLW8Hk5L/hDyGRt7ZDLk5bBvMQXQ9PKF2B4SWKuVjVhkSCGUZxRNn/BoST4fTbMJsbc67/+2mav7gNUFUDQNqJGbJbZcS9bvu4rCmEMwFXj/patqmxOgS5XWwAFkJ/o3O4ZD4SO05cQKBgAl2yD4GZukzdcAv91Ejl2WOsK5HB8UXxI5qwww47nyeRHrNrl0dQ26/DOrfjZ6E2PN9/78pX2VLj3exLgEuxPpcNaW5mkn+Tg5Ad4Ow4cSckYWhDXEJByzyWswS+cuCMLX3+LEy5Rr4gEWaYGfKht7bVQb7l6tInud5YKmwgubJAoGAXN11RvTWHSOI6wF71bxxW8g8q+AWyByVrFQ8F8RkJnX2LUaSx40CxlMsVlYlMeSZ3N9/z9L9Ovh/btjMtbHpllyXgeo/9fCpMeczDM80FyZjREGW63y1i4ZWNy4uPGnUs9QG4dqx9onHVPvBarHZ0iXy6YzY5uMV36yruUYOdCECgYA+41ZTBGdBuRCOoAmm2cBIR80zG6cm894a/wKgDeVZq6bmX1T9uynAru1wK1NLSW5gmqlzuCir6c/S9FtIDuD06SeqCA2EoXBTSWxPWMK3hY/tOxB2NrSkxX+1FBxi7v0pstpHDFjYzyNimxCtGIJMgjUFp6b45fDMCEJdTaFsHg==";
+
+        PrivateKey privateKey = EncryptUtils.getPrivateKey(privUserKey);
+
+        String descryptedAesKey = EncryptUtils.decryptRsa(aesEncryptedWithUserPubKey, privateKey);
+
+        SecretKey aes = EncryptUtils.getSecretKey(descryptedAesKey);
+
+        String descryptedServerPubKey = EncryptUtils.decryptAes(serverPubKeyEncryptedWithAes, aes, new IvParameterSpec(new byte[16]));
+
+
+        Assertions.assertEquals(originalAesKey, descryptedAesKey);
+        Assertions.assertEquals(originalServerPubKey, descryptedServerPubKey);
+    }
+
+
+}
