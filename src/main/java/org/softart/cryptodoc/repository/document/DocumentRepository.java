@@ -8,11 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
     @Transactional(readOnly = true)
     Page<Document> findDocumentsByUser(User user, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Document findDocumentByIdAndUser(Long documentId, User user);
+    Optional<Document> findDocumentByIdAndUser(Long documentId, User user);
 }

@@ -8,6 +8,7 @@ import org.softart.cryptodoc.components.Base64Utils;
 import org.softart.cryptodoc.components.EncryptUtils;
 import org.softart.cryptodoc.components.auth.Auth;
 import org.softart.cryptodoc.components.aws.CryptoDocS3;
+import org.softart.cryptodoc.exceptions.repository.NotFoundException;
 import org.softart.cryptodoc.models.document.Document;
 import org.softart.cryptodoc.models.document.request.SecureDocumentUploadRequest;
 import org.softart.cryptodoc.models.document.request.UnsecureDocumentUploadRequest;
@@ -101,7 +102,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Transactional(readOnly = true)
     @SneakyThrows
     public Document getDocument(Long documentId, boolean secure) {
-        Document document = getDocumentRepository().findDocumentByIdAndUser(documentId, Auth.getUser());
+        Document document = getDocumentRepository().findDocumentByIdAndUser(documentId, Auth.getUser()).orElseThrow(() -> new NotFoundException(documentId));
         return document.withContent(secure ? getEncryptedContent(document) : getPlainContent(document));
     }
 }

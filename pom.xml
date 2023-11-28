@@ -19,6 +19,7 @@
         <aws.java.sdk.version>2.21.29</aws.java.sdk.version>
         <springdoc-openapi.version>1.7.0</springdoc-openapi.version>
         <bouncycastle.version>1.76</bouncycastle.version>
+        <mariadb.version>3.3.0</mariadb.version>
     </properties>
     <dependencies>
 
